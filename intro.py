@@ -1,6 +1,7 @@
 # Imports
 import arcade
 import time
+from enum import Enum
 
 # Constants
 SCREEN_WIDTH = 1024
@@ -12,6 +13,11 @@ SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
 PLAYER_STARTING_LOC = (6, 6)
 MUSIC_VOLUME = 0.5
+class Direction(Enum):
+    UP = 1
+    DOWN = 2
+    LEFT = 3
+    RIGHT = 4
 
 # Classes
 class Player(arcade.Sprite):
@@ -20,20 +26,33 @@ class Player(arcade.Sprite):
     def update(self):
         """ Move the player """
         # Move player.
-        # Remove these lines if physics engine is moving player.
-        self.center_x += self.change_x
-        self.center_y += self.change_y
+        if self.dest_loc != self.cur_loc:
+            self.change_x = (self.dest_loc[0] - self.cur_loc[0]) * MOVEMENT_SPEED
+            self.change_y = (self.dest_loc[1] - self.cur_loc[1]) * MOVEMENT_SPEED
 
-        # Check for out-of-bounds
-        if self.left < 0:
-            self.left = 0
-        elif self.right > SCREEN_WIDTH - 1:
-            self.right = SCREEN_WIDTH - 1
+            # don't ask how I came up with these formulas ???
+            if (self.left + self.change_x) // CELL_LENGTH != self.cur_loc[0] - 1 * (self.change_x < 0):
+                self.cur_loc = self.dest_loc
+                self.left = self.cur_loc[0] * CELL_LENGTH + 1
+            else:
+                self.left += self.change_x
 
-        if self.bottom < 0:
-            self.bottom = 0
-        elif self.top > SCREEN_HEIGHT - 1:
-            self.top = SCREEN_HEIGHT - 1
+            if (self.bottom + self.change_y) // CELL_LENGTH != self.cur_loc[1] - 1 * (self.change_y < 0):
+                self.cur_loc = self.dest_loc
+                self.bottom = self.cur_loc[1] * CELL_LENGTH + 1
+            else:
+                self.bottom += self.change_y
+
+            # Check for out-of-bounds
+            if self.left < 0:
+                self.left = 0
+            elif self.right > SCREEN_WIDTH - 1:
+                self.right = SCREEN_WIDTH - 1
+
+            if self.bottom < 0:
+                self.bottom = 0
+            elif self.top > SCREEN_HEIGHT - 1:
+                self.top = SCREEN_HEIGHT - 1
 
 class Game(arcade.Window):
     """Main welcome window"""
@@ -43,17 +62,17 @@ class Game(arcade.Window):
         # Call the parent class constructor
         super().__init__(width, height, title)
 
-        # Variables that will hold sprite lists
-        self.player_list = None
-
-        # Set up the player info
-        self.player_sprite = None
-
         # Track the current state of what key is pressed
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+
+        # Variables that will hold sprite lists
+        self.player_list = None
+
+        # Set up the player info
+        self.player_sprite = None
 
         # Set the background window
         arcade.set_background_color(arcade.color.WHITE)
@@ -74,6 +93,8 @@ class Game(arcade.Window):
         self.player_sprite = Player("./assets/69/neutral.png", SPRITE_SCALING)
         self.player_sprite.center_x = PLAYER_STARTING_LOC[0]*CELL_LENGTH + CELL_LENGTH/2
         self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
+        self.player_sprite.cur_loc = PLAYER_STARTING_LOC
+        self.player_sprite.dest_loc = PLAYER_STARTING_LOC
         self.player_list.append(self.player_sprite)
 
         # List of music
@@ -96,19 +117,17 @@ class Game(arcade.Window):
         if position == 0.0:
             self.play_song()
     
-    def update_player_speed(self):
-        # Calculate speed based on the keys pressed
-        self.player_sprite.change_x = 0
-        self.player_sprite.change_y = 0
-
+    def update_dest_loc(self):
+        # Calculate destination location based on the keys pressed
         if self.up_pressed and not self.down_pressed:
-            self.player_sprite.change_y = MOVEMENT_SPEED
+            self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0], self.player_sprite.cur_loc[1] + 1)
         elif self.down_pressed and not self.up_pressed:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-        if self.left_pressed and not self.right_pressed:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
+            self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0], self.player_sprite.cur_loc[1] - 1)
+        elif self.left_pressed and not self.right_pressed:
+            self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0] - 1, self.player_sprite.cur_loc[1])
         elif self.right_pressed and not self.left_pressed:
-            self.player_sprite.change_x = MOVEMENT_SPEED
+            self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0] + 1, self.player_sprite.cur_loc[1])
+
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -123,7 +142,7 @@ class Game(arcade.Window):
             self.right_pressed = True
         elif key == arcade.key.ESCAPE:
             arcade.close_window()
-        self.update_player_speed()
+        self.update_dest_loc()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -136,7 +155,7 @@ class Game(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
-        self.update_player_speed()
+        self.update_dest_loc()
 
     def on_draw(self):
         """Called whenever you need to draw your window"""
@@ -160,11 +179,6 @@ class Game(arcade.Window):
     
     def play_song(self):
         """ Play the song. """
-        # Stop what is currently playing.
-        if self.music:
-            self.music.stop()
-
-        # Play the next song
         self.music = arcade.Sound(self.bgm, streaming=True)
         self.current_player = self.music.play(MUSIC_VOLUME)
         # This is a quick delay. If we don't do this, our elapsed time is 0.0
