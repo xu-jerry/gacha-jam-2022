@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Welcome to Arcade"
 RADIUS = 150
 CELL_LENGTH = 64
-SPRITE_SCALING = 0.5
+SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
 
 # Classes
@@ -33,11 +33,9 @@ class Player(arcade.Sprite):
             self.top = SCREEN_HEIGHT - 1
 
 class Game(arcade.Window):
-    """Main welcome window
-    """
+    """Main welcome window"""
     def __init__(self, width, height, title):
-        """Initialize the window
-        """
+        """Initialize the window"""
 
         # Call the parent class constructor
         super().__init__(width, height, title)
@@ -64,7 +62,7 @@ class Game(arcade.Window):
         self.player_list = arcade.SpriteList()
 
         # Set up the player
-        self.player_sprite = Player("./images/kirby.png", SPRITE_SCALING)
+        self.player_sprite = Player("./assets/69/neutral.png", SPRITE_SCALING)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
@@ -116,14 +114,21 @@ class Game(arcade.Window):
         self.update_player_speed()
 
     def on_draw(self):
-        """Called whenever you need to draw your window
-        """
+        """Called whenever you need to draw your window"""
 
         # Clear the screen and start drawing
         arcade.start_render()
 
         # This command has to happen before we start drawing
         self.clear()
+
+        # horizontal lines
+        for i in range(0, SCREEN_HEIGHT, CELL_LENGTH):
+            arcade.draw_line(0, i, SCREEN_WIDTH, i, arcade.color.BLACK, 2)
+
+        # vertical lines
+        for i in range(0, SCREEN_WIDTH, CELL_LENGTH):
+            arcade.draw_line(i, 0, i, SCREEN_HEIGHT, arcade.color.BLACK, 2)
 
         # Draw all the sprites.
         self.player_list.draw()
