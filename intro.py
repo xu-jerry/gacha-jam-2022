@@ -1,5 +1,6 @@
 # Imports
 import arcade
+import time
 
 # Constants
 SCREEN_WIDTH = 1024
@@ -7,8 +8,10 @@ SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Welcome to Arcade"
 RADIUS = 150
 CELL_LENGTH = 64
-SPRITE_SCALING = 0.5
+SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
+PLAYER_STARTING_LOC = (6, 6)
+MUSIC_VOLUME = 0.5
 
 # Classes
 class Player(arcade.Sprite):
@@ -33,11 +36,9 @@ class Player(arcade.Sprite):
             self.top = SCREEN_HEIGHT - 1
 
 class Game(arcade.Window):
-    """Main welcome window
-    """
+    """Main welcome window"""
     def __init__(self, width, height, title):
-        """Initialize the window
-        """
+        """Initialize the window"""
 
         # Call the parent class constructor
         super().__init__(width, height, title)
@@ -57,6 +58,12 @@ class Game(arcade.Window):
         # Set the background window
         arcade.set_background_color(arcade.color.WHITE)
 
+        # Music
+        self.bgm = None
+        self.current_song_index = 0
+        self.current_player = None
+        self.music = None
+
     def setup(self):
         """ Set up the game and initialize the variables. """
 
@@ -64,16 +71,30 @@ class Game(arcade.Window):
         self.player_list = arcade.SpriteList()
 
         # Set up the player
-        self.player_sprite = Player("./images/kirby.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        self.player_sprite = Player("./assets/69/neutral.png", SPRITE_SCALING)
+        self.player_sprite.center_x = PLAYER_STARTING_LOC[0]*CELL_LENGTH + CELL_LENGTH/2
+        self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
         self.player_list.append(self.player_sprite)
+
+        # List of music
+        self.bgm = "./assets/music/M-16 March.wav"
+        # Play the song
+        self.play_song()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
 
         # Move the player
         self.player_list.update()
+
+        # Music
+        position = self.music.get_stream_position(self.current_player)
+
+        # The position pointer is reset to 0 right after we finish the song.
+        # This makes it very difficult to figure out if we just started playing
+        # or if we are doing playing.
+        if position == 0.0:
+            self.play_song()
     
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -92,32 +113,33 @@ class Game(arcade.Window):
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.UP or key == arcade.key.W:
             self.up_pressed = True
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.DOWN or key == arcade.key.S:
             self.down_pressed = True
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.LEFT or key == arcade.key.A:
             self.left_pressed = True
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
+        elif key == arcade.key.ESCAPE:
+            arcade.close_window()
         self.update_player_speed()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.UP:
+        if key == arcade.key.UP or key == arcade.key.W:
             self.up_pressed = False
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.DOWN or key == arcade.key.S:
             self.down_pressed = False
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.LEFT or key == arcade.key.A:
             self.left_pressed = False
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
         self.update_player_speed()
 
     def on_draw(self):
-        """Called whenever you need to draw your window
-        """
+        """Called whenever you need to draw your window"""
 
         # Clear the screen and start drawing
         arcade.start_render()
@@ -125,8 +147,30 @@ class Game(arcade.Window):
         # This command has to happen before we start drawing
         self.clear()
 
+        # horizontal lines
+        for i in range(0, SCREEN_HEIGHT, CELL_LENGTH):
+            arcade.draw_line(0, i, SCREEN_WIDTH, i, arcade.color.BLACK, 2)
+
+        # vertical lines
+        for i in range(0, SCREEN_WIDTH, CELL_LENGTH):
+            arcade.draw_line(i, 0, i, SCREEN_HEIGHT, arcade.color.BLACK, 2)
+
         # Draw all the sprites.
         self.player_list.draw()
+    
+    def play_song(self):
+        """ Play the song. """
+        # Stop what is currently playing.
+        if self.music:
+            self.music.stop()
+
+        # Play the next song
+        self.music = arcade.Sound(self.bgm, streaming=True)
+        self.current_player = self.music.play(MUSIC_VOLUME)
+        # This is a quick delay. If we don't do this, our elapsed time is 0.0
+        # and on_update will think the music is over and advance us to the next
+        # song before starting this one.
+        time.sleep(0.03)
 
 def main():
     """ Main function """
