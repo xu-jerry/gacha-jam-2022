@@ -1,5 +1,6 @@
 # Imports
 import arcade
+import time
 
 # Constants
 SCREEN_WIDTH = 1024
@@ -10,6 +11,7 @@ CELL_LENGTH = 64
 SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
 PLAYER_STARTING_LOC = (6, 6)
+MUSIC_VOLUME = 0.5
 
 # Classes
 class Player(arcade.Sprite):
@@ -56,6 +58,12 @@ class Game(arcade.Window):
         # Set the background window
         arcade.set_background_color(arcade.color.WHITE)
 
+        # Music
+        self.bgm = None
+        self.current_song_index = 0
+        self.current_player = None
+        self.music = None
+
     def setup(self):
         """ Set up the game and initialize the variables. """
 
@@ -68,11 +76,25 @@ class Game(arcade.Window):
         self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
         self.player_list.append(self.player_sprite)
 
+        # List of music
+        self.bgm = "./assets/music/M-16 March.wav"
+        # Play the song
+        self.play_song()
+
     def on_update(self, delta_time):
         """ Movement and game logic """
 
         # Move the player
         self.player_list.update()
+
+        # Music
+        position = self.music.get_stream_position(self.current_player)
+
+        # The position pointer is reset to 0 right after we finish the song.
+        # This makes it very difficult to figure out if we just started playing
+        # or if we are doing playing.
+        if position == 0.0:
+            self.play_song()
     
     def update_player_speed(self):
         # Calculate speed based on the keys pressed
@@ -135,6 +157,20 @@ class Game(arcade.Window):
 
         # Draw all the sprites.
         self.player_list.draw()
+    
+    def play_song(self):
+        """ Play the song. """
+        # Stop what is currently playing.
+        if self.music:
+            self.music.stop()
+
+        # Play the next song
+        self.music = arcade.Sound(self.bgm, streaming=True)
+        self.current_player = self.music.play(MUSIC_VOLUME)
+        # This is a quick delay. If we don't do this, our elapsed time is 0.0
+        # and on_update will think the music is over and advance us to the next
+        # song before starting this one.
+        time.sleep(0.03)
 
 def main():
     """ Main function """
