@@ -9,6 +9,7 @@ RADIUS = 150
 CELL_LENGTH = 64
 SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
+PLAYER_STARTING_LOC = (6, 6)
 
 # Classes
 class Player(arcade.Sprite):
@@ -63,8 +64,8 @@ class Game(arcade.Window):
 
         # Set up the player
         self.player_sprite = Player("./assets/69/neutral.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        self.player_sprite.center_x = PLAYER_STARTING_LOC[0]*CELL_LENGTH + CELL_LENGTH/2
+        self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
         self.player_list.append(self.player_sprite)
 
     def on_update(self, delta_time):
