@@ -51,7 +51,6 @@ class Game(arcade.Window):
         self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
         self.player_sprite.cur_loc = PLAYER_STARTING_LOC
         self.player_sprite.dest_loc = PLAYER_STARTING_LOC
-        self.player_sprite.direction = None
         self.player_list.append(self.player_sprite)
 
         # Set up coats
@@ -89,16 +88,16 @@ class Game(arcade.Window):
     def update_dest_loc(self):
         # Calculate destination location based on the keys pressed
         if self.up_pressed and not self.down_pressed:
-            self.direction = Direction.UP
+            self.player_sprite.direction = Direction.UP
             self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0], self.player_sprite.cur_loc[1] + 1)
         elif self.down_pressed and not self.up_pressed:
-            self.direction = Direction.DOWN
+            self.player_sprite.direction = Direction.DOWN
             self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0], self.player_sprite.cur_loc[1] - 1)
         elif self.left_pressed and not self.right_pressed:
-            self.direction = Direction.LEFT
+            self.player_sprite.direction = Direction.LEFT
             self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0] - 1, self.player_sprite.cur_loc[1])
         elif self.right_pressed and not self.left_pressed:
-            self.direction = Direction.RIGHT
+            self.player_sprite.direction = Direction.RIGHT
             self.player_sprite.dest_loc = (self.player_sprite.cur_loc[0] + 1, self.player_sprite.cur_loc[1])
 
 

@@ -10,8 +10,8 @@ class Player(arcade.Sprite):
         # Set up parent class
         super().__init__()
 
-        # Default to face-right
-        self.character_face_direction = Direction.DOWN
+        # Default to face-down
+        self.direction = Direction.DOWN
 
         # Used for flipping between image sequences
         self.cur_texture = 0
@@ -41,6 +41,7 @@ class Player(arcade.Sprite):
 
         # Set the initial texture
         self.texture = self.down_textures[0]
+        self.prev_texture = 2
 
     def update(self):
         """ Move the player """
@@ -72,3 +73,41 @@ class Player(arcade.Sprite):
                 self.bottom = 0
             elif self.top > SCREEN_HEIGHT - 1:
                 self.top = SCREEN_HEIGHT - 1
+
+            # change texture
+            if self.direction == Direction.DOWN:
+                if self.texture != self.down_textures[0]:
+                    self.texture = self.down_textures[0]
+                elif self.prev_texture == 2:
+                    self.texture = self.down_textures[1]
+                    self.prev_texture = 1
+                else:
+                    self.texture = self.down_textures[2]
+                    self.prev_texture = 2
+            elif self.direction == Direction.UP:
+                if self.texture != self.up_textures[0]:
+                    self.texture = self.up_textures[0]
+                elif self.prev_texture == 2:
+                    self.texture = self.up_textures[1]
+                    self.prev_texture = 1
+                else:
+                    self.texture = self.up_textures[2]
+                    self.prev_texture = 2
+            elif self.direction == Direction.LEFT:
+                if self.texture != self.left_textures[0]:
+                    self.texture = self.left_textures[0]
+                elif self.prev_texture == 2:
+                    self.texture = self.left_textures[1]
+                    self.prev_texture = 1
+                else:
+                    self.texture = self.left_textures[2]
+                    self.prev_texture = 2
+            else:
+                if self.texture != self.right_textures[0]:
+                    self.texture = self.right_textures[0]
+                elif self.prev_texture == 2:
+                    self.texture = self.right_textures[1]
+                    self.prev_texture = 1
+                else:
+                    self.texture = self.right_textures[2]
+                    self.prev_texture = 2
