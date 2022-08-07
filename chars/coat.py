@@ -21,6 +21,7 @@ class Coat(arcade.Sprite):
         self.dir = dir
         self.x_border = (Direction.LEFT - dir + 1) * 15 * CELL_LENGTH + CELL_LENGTH / 2
         self.new_fireball = True
+        self.health = 2
 
         # --- Load Textures ---
         main_path = "./assets/coats/"
@@ -56,4 +57,10 @@ class Coat(arcade.Sprite):
             self.fireball.kill()
             self.new_fireball = True
             self.fireball = Fireball(self.pos, self.dir)
+    
+    def get_hit(self):
+        self.health -= 1
+        print("health", self.health)
+        if self.health <= 0:
+            self.kill()
 

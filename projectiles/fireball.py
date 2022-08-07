@@ -65,3 +65,6 @@ class Fireball(arcade.Sprite):
             self.texture = self.textures[self.anim_frame]
 
         self.frame += 1
+
+        if self.left > SCREEN_WIDTH or self.right < 0 or self.top < 0 or self.bottom > SCREEN_HEIGHT:
+            self.kill()

@@ -49,6 +49,7 @@ class Game(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.coats = arcade.SpriteList()
         self.enemy = arcade.SpriteList()
+        self.bullets = arcade.SpriteList()
 
         # Set up the player
         self.player_sprite = Player()
@@ -63,8 +64,9 @@ class Game(arcade.Window):
         self.coats.append(Coat('brown', 4, Direction.DOWN))
         self.coats.append(Coat('red', 3, Direction.LEFT))
         self.coats.append(Coat('tan', 3, Direction.RIGHT))
-
         self.player_list.extend(self.coats)
+
+        # Initial fireballs
         self.player_list.extend([coat.fireball for coat in self.coats])
         self.enemy.extend([coat.fireball for coat in self.coats])
 
@@ -76,23 +78,32 @@ class Game(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        # Move the player
-        if self.player_sprite.dest_loc == self.player_sprite.cur_loc:
-            self.update_dest_loc()
-        self.player_list.update()
-
-        self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])
-        self.enemy.extend([coat.fireball for coat in self.coats if coat.new_fireball])
-
-        for bullet in self.player_sprite.bullets:
-            if bullet not in self.player_list:
-                self.player_list.append(bullet)
-
         # check if died
         if self.player_sprite.collides_with_list(self.enemy):
             [sprite.kill() for sprite in self.player_sprite.collides_with_list(self.enemy)]
             self.player_sprite.health -= 1
             print("Your health is now", self.player_sprite.health)
+        
+        # Check if bullets hit coats
+        for coat in self.coats:
+            if coat.collides_with_list(self.bullets):
+                [sprite.kill() for sprite in coat.collides_with_list(self.bullets)]
+                coat.get_hit()
+
+        # Move the player
+        if self.player_sprite.dest_loc == self.player_sprite.cur_loc:
+            self.update_dest_loc()
+        self.player_list.update()
+
+        # Add new sprites if necessary
+        self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])
+        self.enemy.extend([coat.fireball for coat in self.coats if coat.new_fireball])
+        for bullet in self.player_sprite.bullets:
+            if bullet not in self.player_list:
+                self.player_list.append(bullet)
+            if bullet not in self.bullets:
+                self.bullets.append(bullet)
+                print(len(self.bullets))
 
         # Music
         position = self.music.get_stream_position(self.current_player)

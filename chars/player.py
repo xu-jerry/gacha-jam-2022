@@ -127,8 +127,6 @@ class Player(arcade.Sprite):
                     self.texture = self.right_textures[2]
                     self.prev_texture = 2
         else:
-            print("cur_loc", self.cur_loc)
-            print("dest_loc", self.dest_loc)
             self.center_x = xpos(self.cur_loc[0], CELL_LENGTH)
             self.center_y = self.cur_loc[1] * CELL_LENGTH + CELL_LENGTH / 2
     

@@ -39,3 +39,6 @@ class Bullet(arcade.Sprite):
             self.center_x += CELL_LENGTH / 12
         elif self.dir == Direction.LEFT:
             self.center_x -= CELL_LENGTH / 12
+
+        if self.left > SCREEN_WIDTH or self.right < 0 or self.top < 0 or self.bottom > SCREEN_HEIGHT:
+            self.kill()
