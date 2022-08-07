@@ -18,7 +18,7 @@ class Player(arcade.Sprite):
         self.scale = SPRITE_SCALING
 
         # --- Load Textures ---
-        main_path = "./assets/vanilla69/69"
+        main_path = "./assets/gun69/gun69"
 
         # Load textures for 4 directions
         self.down_textures = []
