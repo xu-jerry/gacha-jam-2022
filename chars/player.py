@@ -47,32 +47,34 @@ class Player(arcade.Sprite):
         """ Move the player """
         # Move player.
         if self.dest_loc != self.cur_loc:
+            if not self.in_grid(self.dest_loc):
+                self.dest_loc = self.cur_loc
             self.change_x = (self.dest_loc[0] - self.cur_loc[0]) * MOVEMENT_SPEED
             self.change_y = (self.dest_loc[1] - self.cur_loc[1]) * MOVEMENT_SPEED
 
             # don't ask how I came up with these formulas ???
-            if (self.center_x + self.change_x - CELL_LENGTH / 2) // CELL_LENGTH != self.cur_loc[0] - 1 * (self.change_x < 0):
-                self.cur_loc = self.dest_loc
+            if (self.center_x + self.change_x - CELL_LENGTH / 2) // CELL_LENGTH == self.dest_loc[0] - 1 * (self.change_x < 0):
+                self.cur_loc = (self.dest_loc[0], self.cur_loc[1])
                 self.center_x = self.cur_loc[0] * CELL_LENGTH + CELL_LENGTH / 2
             else:
                 self.left += self.change_x
 
-            if (self.center_y + self.change_y - CELL_LENGTH / 2) // CELL_LENGTH != self.cur_loc[1] - 1 * (self.change_y < 0):
-                self.cur_loc = self.dest_loc
+            if (self.center_y + self.change_y - CELL_LENGTH / 2) // CELL_LENGTH == self.dest_loc[1] - 1 * (self.change_y < 0):
+                self.cur_loc = (self.cur_loc[0], self.dest_loc[1])
                 self.center_y = self.cur_loc[1] * CELL_LENGTH + CELL_LENGTH / 2
             else:
                 self.bottom += self.change_y
 
             # Check for out-of-bounds
-            if self.left < 0:
-                self.left = 0
-            elif self.right > SCREEN_WIDTH - 1:
-                self.right = SCREEN_WIDTH - 1
+            if self.center_x < CELL_LENGTH / 2:
+                self.center_x = CELL_LENGTH / 2
+            elif self.center_x > SCREEN_WIDTH - 1 - CELL_LENGTH / 2:
+                self.center_x = SCREEN_WIDTH - 1 - CELL_LENGTH / 2
 
-            if self.bottom < 0:
-                self.bottom = 0
-            elif self.top > SCREEN_HEIGHT - 1:
-                self.top = SCREEN_HEIGHT - 1
+            if self.center_y < CELL_LENGTH / 2:
+                self.center_y = CELL_LENGTH / 2
+            elif self.center_y > SCREEN_HEIGHT - 1 - CELL_LENGTH / 2:
+                self.center_y = SCREEN_HEIGHT - 1 - CELL_LENGTH / 2
 
             # change texture
             if self.direction == Direction.DOWN:
@@ -111,3 +113,13 @@ class Player(arcade.Sprite):
                 else:
                     self.texture = self.right_textures[2]
                     self.prev_texture = 2
+        print("cur_loc: ", self.cur_loc)
+        print("dest_loc: ", self.dest_loc)
+    
+    def in_grid(self, loc):
+        x, y = loc
+        if x < 0 or x > 15:
+            return False
+        if y < 0 or y > 11:
+            return False
+        return True
