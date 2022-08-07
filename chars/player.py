@@ -1,5 +1,6 @@
 import arcade
 from consts import *
+from projectiles.bullet import Bullet
 
 # Classes
 class Player(arcade.Sprite):
@@ -46,12 +47,17 @@ class Player(arcade.Sprite):
         # Health points
         self.health = STARTING_HEALTH_POINTS
 
+        # Bullets
+        self.bullets = []
+
     def update(self):
         """ Move the player """
+        # Check if alive
         if (self.health <= 0):
             print("You died!")
             self.kill()
             arcade.close_window()
+
         # Move player.
         if self.dest_loc != self.cur_loc:
             if not self.in_grid(self.dest_loc):
@@ -120,6 +126,11 @@ class Player(arcade.Sprite):
                 else:
                     self.texture = self.right_textures[2]
                     self.prev_texture = 2
+        else:
+            print("cur_loc", self.cur_loc)
+            print("dest_loc", self.dest_loc)
+            self.center_x = xpos(self.cur_loc[0], CELL_LENGTH)
+            self.center_y = self.cur_loc[1] * CELL_LENGTH + CELL_LENGTH / 2
     
     def in_grid(self, loc):
         x, y = loc
@@ -128,3 +139,6 @@ class Player(arcade.Sprite):
         if y < 0 or y > 11:
             return False
         return True
+    
+    def shoot(self):
+        self.bullets.append(Bullet(self.cur_loc, self.direction))

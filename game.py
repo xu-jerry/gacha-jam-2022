@@ -84,6 +84,10 @@ class Game(arcade.Window):
         self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])
         self.enemy.extend([coat.fireball for coat in self.coats if coat.new_fireball])
 
+        for bullet in self.player_sprite.bullets:
+            if bullet not in self.player_list:
+                self.player_list.append(bullet)
+
         # check if died
         if self.player_sprite.collides_with_list(self.enemy):
             [sprite.kill() for sprite in self.player_sprite.collides_with_list(self.enemy)]
@@ -126,6 +130,8 @@ class Game(arcade.Window):
             self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
+        elif key == arcade.key.SPACE:
+            self.player_sprite.shoot()
         elif key == arcade.key.ESCAPE:
             arcade.close_window()
 
@@ -165,6 +171,7 @@ class Game(arcade.Window):
         """ Play the song. """
         self.music = arcade.Sound(self.bgm, streaming=True)
         self.current_player = self.music.play(MUSIC_VOLUME)
+
         # This is a quick delay. If we don't do this, our elapsed time is 0.0
         # and on_update will think the music is over and advance us to the next
         # song before starting this one.
