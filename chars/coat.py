@@ -60,7 +60,6 @@ class Coat(arcade.Sprite):
     
     def get_hit(self):
         self.health -= 1
-        print("health", self.health)
         if self.health <= 0:
             self.kill()
 

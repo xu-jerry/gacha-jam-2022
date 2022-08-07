@@ -103,7 +103,6 @@ class Game(arcade.Window):
                 self.player_list.append(bullet)
             if bullet not in self.bullets:
                 self.bullets.append(bullet)
-                print(len(self.bullets))
 
         # Music
         position = self.music.get_stream_position(self.current_player)
