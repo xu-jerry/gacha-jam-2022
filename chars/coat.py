@@ -17,6 +17,10 @@ class Coat(arcade.Sprite):
 
         # Set up parent class
         super().__init__()
+        self.pos = pos
+        self.dir = dir
+        self.x_border = (Direction.LEFT - dir + 1) * 15 * CELL_LENGTH + CELL_LENGTH / 2
+        self.new_fireball = True
 
         # --- Load Textures ---
         main_path = "./assets/coats/"
@@ -36,9 +40,20 @@ class Coat(arcade.Sprite):
                 self.center_y = top(CELL_LENGTH)
             elif (dir == Direction.LEFT or Direction.RIGHT) and pos <= 15:
                 # X coordinate is either 1 * 960 + 32 for LEFT or 32 for RIGHT
-                self.center_x = (Direction.LEFT - dir + 1) * 15 * CELL_LENGTH + CELL_LENGTH / 2
+                self.center_x = self.x_border
                 self.center_y = ypos(pos, CELL_LENGTH)
 
         self.fireball = Fireball(pos, dir)
 
-    
+    def update(self):
+        self.new_fireball = False
+
+        if (
+            self.fireball.center_y < -(CELL_LENGTH / 2) or
+            (self.dir == Direction.RIGHT and self.fireball.center_x >= SCREEN_WIDTH - self.x_border - 64) or
+            (self.dir == Direction.LEFT and self.fireball.center_x <= SCREEN_WIDTH - self.x_border + 64)
+        ):
+            self.fireball.kill()
+            self.new_fireball = True
+            self.fireball = Fireball(self.pos, self.dir)
+

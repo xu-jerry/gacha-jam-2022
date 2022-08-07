@@ -61,9 +61,7 @@ class Game(arcade.Window):
         self.coats.append(Coat('tan', 3, Direction.RIGHT))
 
         self.player_list.extend(self.coats)
-        
-        for coat in self.coats:
-            self.player_list.append(coat.fireball)
+        self.player_list.extend([coat.fireball for coat in self.coats])
 
         # List of music
         self.bgm = "./assets/music/marksmanship.wav"
@@ -76,6 +74,8 @@ class Game(arcade.Window):
         # Move the player
         self.update_dest_loc()
         self.player_list.update()
+
+        self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])
 
         # Music
         position = self.music.get_stream_position(self.current_player)

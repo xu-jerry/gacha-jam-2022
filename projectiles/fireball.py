@@ -14,6 +14,9 @@ class Fireball(arcade.Sprite):
         """
 
         super().__init__()
+        self.frame = 1  # Frame counter
+        self.dir = dir
+        self.anim_frame = 0
 
         # --- Load textures
         main_path = "./assets/"
@@ -46,4 +49,19 @@ class Fireball(arcade.Sprite):
                 self.center_x = (Direction.LEFT - dir + 1) * 13 * CELL_LENGTH + 3 * CELL_LENGTH / 2
                 self.center_y = ypos(pos, CELL_LENGTH)
 
-        self.texture = self.textures[0]
+        self.texture = self.textures[self.anim_frame]
+    
+    def update(self):
+        if self.dir == Direction.DOWN:
+            self.center_y -= CELL_LENGTH / 12
+        elif self.dir == Direction.RIGHT:
+            self.center_x += CELL_LENGTH / 12
+        elif self.dir == Direction.LEFT:
+            self.center_x -= CELL_LENGTH / 12
+            
+        if self.frame % 24 == 0:
+            self.frame = 0
+            self.anim_frame = ~self.anim_frame
+            self.texture = self.textures[self.anim_frame]
+
+        self.frame += 1
