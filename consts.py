@@ -8,7 +8,7 @@ CELL_LENGTH = 64
 SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
 PLAYER_STARTING_LOC = (6, 6)
-MUSIC_VOLUME = 0
+MUSIC_VOLUME = 0.5
 
 class Direction(Enum):
     def __sub__(self, other):
