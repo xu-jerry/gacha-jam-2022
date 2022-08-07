@@ -23,6 +23,43 @@ class Direction(Enum):
 class Player(arcade.Sprite):
     """ Player Class """
 
+    def __init__(self):
+
+        # Set up parent class
+        super().__init__()
+
+        # Default to face-right
+        self.character_face_direction = Direction.DOWN
+
+        # Used for flipping between image sequences
+        self.cur_texture = 0
+        self.scale = SPRITE_SCALING
+
+        # --- Load Textures ---
+        main_path = "./assets/69/69"
+
+        # Load textures for 4 directions
+        self.down_textures = []
+        self.up_textures = []
+        self.left_textures = []
+        self.right_textures = []
+
+        for i in range(3):
+            texture = arcade.load_texture(f"{main_path}down{i}.png")
+            self.down_textures.append(texture)
+        for i in range(3):
+            texture = arcade.load_texture(f"{main_path}up{i}.png")
+            self.up_textures.append(texture)
+        for i in range(3):
+            texture = arcade.load_texture(f"{main_path}left{i}.png")
+            self.down_textures.append(texture)
+        for i in range(3):
+            texture = arcade.load_texture(f"{main_path}left{i}.png")
+            self.down_textures.append(texture)
+
+        # Set the initial texture
+        self.texture = self.down_textures[0]
+
     def update(self):
         """ Move the player """
         # Move player.
@@ -90,7 +127,7 @@ class Game(arcade.Window):
         self.player_list = arcade.SpriteList()
 
         # Set up the player
-        self.player_sprite = Player("./assets/69/69down0.png", SPRITE_SCALING)
+        self.player_sprite = Player()
         self.player_sprite.center_x = PLAYER_STARTING_LOC[0]*CELL_LENGTH + CELL_LENGTH/2
         self.player_sprite.center_y = PLAYER_STARTING_LOC[1]*CELL_LENGTH + CELL_LENGTH/2
         self.player_sprite.cur_loc = PLAYER_STARTING_LOC
@@ -107,6 +144,7 @@ class Game(arcade.Window):
         """ Movement and game logic """
 
         # Move the player
+        self.update_dest_loc()
         self.player_list.update()
 
         # Music
@@ -147,7 +185,6 @@ class Game(arcade.Window):
             self.right_pressed = True
         elif key == arcade.key.ESCAPE:
             arcade.close_window()
-        self.update_dest_loc()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -160,7 +197,6 @@ class Game(arcade.Window):
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
-        self.update_dest_loc()
 
     def on_draw(self):
         """Called whenever you need to draw your window"""
