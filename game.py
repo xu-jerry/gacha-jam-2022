@@ -71,7 +71,8 @@ class Game(arcade.Window):
         """ Movement and game logic """
 
         # Move the player
-        self.update_dest_loc()
+        if self.player_sprite.dest_loc == self.player_sprite.cur_loc:
+            self.update_dest_loc()
         self.player_list.update()
 
         self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])

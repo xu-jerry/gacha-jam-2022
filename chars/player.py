@@ -18,7 +18,7 @@ class Player(arcade.Sprite):
         self.scale = SPRITE_SCALING
 
         # --- Load Textures ---
-        main_path = "./assets/gun69/gun69"
+        self.main_path = "./assets/gun69/gun69"
 
         # Load textures for 4 directions
         self.down_textures = []
@@ -27,16 +27,16 @@ class Player(arcade.Sprite):
         self.right_textures = []
 
         for i in range(3):
-            texture = arcade.load_texture(f"{main_path}down{i}.png")
+            texture = arcade.load_texture(f"{self.main_path}down{i}.png")
             self.down_textures.append(texture)
         for i in range(3):
-            texture = arcade.load_texture(f"{main_path}up{i}.png")
+            texture = arcade.load_texture(f"{self.main_path}up{i}.png")
             self.up_textures.append(texture)
         for i in range(3):
-            texture = arcade.load_texture(f"{main_path}left{i}.png")
+            texture = arcade.load_texture(f"{self.main_path}left{i}.png")
             self.left_textures.append(texture)
         for i in range(3):
-            texture = arcade.load_texture(f"{main_path}right{i}.png")
+            texture = arcade.load_texture(f"{self.main_path}right{i}.png")
             self.right_textures.append(texture)
 
         # Set the initial texture
@@ -51,15 +51,15 @@ class Player(arcade.Sprite):
             self.change_y = (self.dest_loc[1] - self.cur_loc[1]) * MOVEMENT_SPEED
 
             # don't ask how I came up with these formulas ???
-            if (self.left + self.change_x) // CELL_LENGTH != self.cur_loc[0] - 1 * (self.change_x < 0):
+            if (self.center_x + self.change_x - CELL_LENGTH / 2) // CELL_LENGTH != self.cur_loc[0] - 1 * (self.change_x < 0):
                 self.cur_loc = self.dest_loc
-                self.left = self.cur_loc[0] * CELL_LENGTH + 1
+                self.center_x = self.cur_loc[0] * CELL_LENGTH + CELL_LENGTH / 2
             else:
                 self.left += self.change_x
 
-            if (self.bottom + self.change_y) // CELL_LENGTH != self.cur_loc[1] - 1 * (self.change_y < 0):
+            if (self.center_y + self.change_y - CELL_LENGTH / 2) // CELL_LENGTH != self.cur_loc[1] - 1 * (self.change_y < 0):
                 self.cur_loc = self.dest_loc
-                self.bottom = self.cur_loc[1] * CELL_LENGTH + 1
+                self.center_y = self.cur_loc[1] * CELL_LENGTH + CELL_LENGTH / 2
             else:
                 self.bottom += self.change_y
 
