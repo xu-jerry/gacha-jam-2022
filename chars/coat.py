@@ -2,6 +2,7 @@
 import arcade
 import time
 from consts import *
+from projectiles.fireball import Fireball
 
 class Coat(arcade.Sprite):
     """ Enemy Coats Class """
@@ -17,9 +18,6 @@ class Coat(arcade.Sprite):
         # Set up parent class
         super().__init__()
 
-        # Default to face-right
-        self.character_face_direction = dir
-
         # --- Load Textures ---
         main_path = "./assets/coats/"
 
@@ -34,12 +32,13 @@ class Coat(arcade.Sprite):
         # Spawn into pos
         if pos >= 1:
             if dir == Direction.DOWN and pos <= 14:
-                self.center_x = pos * CELL_LENGTH + CELL_LENGTH / 2
-                self.center_y = SCREEN_HEIGHT - CELL_LENGTH / 2
+                self.center_x = xpos(pos, CELL_LENGTH)
+                self.center_y = top(CELL_LENGTH)
             elif (dir == Direction.LEFT or Direction.RIGHT) and pos <= 15:
-                # X coordinate is either 1 * 960 for LEFT or 0 * 960 for RIGHT
+                # X coordinate is either 1 * 960 + 32 for LEFT or 32 for RIGHT
                 self.center_x = (Direction.LEFT - dir + 1) * 15 * CELL_LENGTH + CELL_LENGTH / 2
-                self.center_y = SCREEN_HEIGHT - pos * CELL_LENGTH + CELL_LENGTH / 2
+                self.center_y = ypos(pos, CELL_LENGTH)
 
-        # --- Fire fireballs ---
+        self.fireball = Fireball(pos, dir)
+
     

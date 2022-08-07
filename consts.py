@@ -18,3 +18,15 @@ class Direction(Enum):
     DOWN = 2
     LEFT = 3
     RIGHT = 4
+
+def ypos(pos, factor):
+    """ Returns y position based on pos # and scale factor """
+    return SCREEN_HEIGHT - pos * factor + factor / 2
+
+def xpos(pos, factor):
+    """ Returns x position based on pos # and scale factor """
+    return pos * factor + factor / 2
+
+def top(factor):
+    """ Returns top y position based on scale factor """
+    return SCREEN_HEIGHT - factor / 2

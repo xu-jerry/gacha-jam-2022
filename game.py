@@ -61,6 +61,9 @@ class Game(arcade.Window):
         self.coats.append(Coat('tan', 3, Direction.RIGHT))
 
         self.player_list.extend(self.coats)
+        
+        for coat in self.coats:
+            self.player_list.append(coat.fireball)
 
         # List of music
         self.bgm = "./assets/music/marksmanship.wav"
