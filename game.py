@@ -28,7 +28,10 @@ class Game(arcade.Window):
         self.player_sprite = None
 
         # Set up coats info
-        self.coats = []
+        self.coats = None
+
+        # Set up enemy info
+        self.enemy = None
 
         # Set the background window
         arcade.set_background_color(arcade.color.WHITE)
@@ -44,6 +47,8 @@ class Game(arcade.Window):
 
         # Sprite lists
         self.player_list = arcade.SpriteList()
+        self.coats = arcade.SpriteList()
+        self.enemy = arcade.SpriteList()
 
         # Set up the player
         self.player_sprite = Player()
@@ -61,6 +66,7 @@ class Game(arcade.Window):
 
         self.player_list.extend(self.coats)
         self.player_list.extend([coat.fireball for coat in self.coats])
+        self.enemy.extend([coat.fireball for coat in self.coats])
 
         # List of music
         self.bgm = "./assets/music/marksmanship.wav"
@@ -76,6 +82,13 @@ class Game(arcade.Window):
         self.player_list.update()
 
         self.player_list.extend([coat.fireball for coat in self.coats if coat.new_fireball])
+        self.enemy.extend([coat.fireball for coat in self.coats if coat.new_fireball])
+
+        # check if died
+        if self.player_sprite.collides_with_list(self.enemy):
+            [sprite.kill() for sprite in self.player_sprite.collides_with_list(self.enemy)]
+            self.player_sprite.health -= 1
+            print("Your health is now", self.player_sprite.health)
 
         # Music
         position = self.music.get_stream_position(self.current_player)

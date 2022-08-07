@@ -9,6 +9,7 @@ SPRITE_SCALING = 1
 MOVEMENT_SPEED = 5
 PLAYER_STARTING_LOC = (6, 6)
 MUSIC_VOLUME = 0.5
+STARTING_HEALTH_POINTS = 3
 
 class Direction(Enum):
     def __sub__(self, other):

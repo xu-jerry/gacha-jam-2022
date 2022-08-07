@@ -43,8 +43,15 @@ class Player(arcade.Sprite):
         self.texture = self.down_textures[0]
         self.prev_texture = 2
 
+        # Health points
+        self.health = STARTING_HEALTH_POINTS
+
     def update(self):
         """ Move the player """
+        if (self.health <= 0):
+            print("You died!")
+            self.kill()
+            arcade.close_window()
         # Move player.
         if self.dest_loc != self.cur_loc:
             if not self.in_grid(self.dest_loc):
@@ -113,8 +120,6 @@ class Player(arcade.Sprite):
                 else:
                     self.texture = self.right_textures[2]
                     self.prev_texture = 2
-        print("cur_loc: ", self.cur_loc)
-        print("dest_loc: ", self.dest_loc)
     
     def in_grid(self, loc):
         x, y = loc
