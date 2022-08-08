@@ -162,15 +162,16 @@ class Game(arcade.Window):
         # Add Madison when there are no more coats
         if len(self.coats) == 0:
             [sprite.kill() for sprite in self.player_list if sprite != self.player_sprite]
-
-            self.coats.append(Coat('red', 1, Direction.DOWN))
+            [enemy.kill() for enemy in self.enemy]
+                
+            self.coats.append(Coat('red', 2, Direction.DOWN))
             self.coats.append(Coat('brown', 14, Direction.DOWN))
             self.coats.append(Coat('red', 6, Direction.LEFT))
             self.coats.append(Coat('tan', 6, Direction.RIGHT))
-            self.coats.append(Coat('red', 3, Direction.DOWN))
-            self.coats.append(Coat('brown', 14, Direction.LEFT))
-            self.coats.append(Coat('red', 9, Direction.LEFT))
-            self.coats.append(Coat('tan', 12, Direction.RIGHT))
+            self.coats.append(Coat('red', 4, Direction.DOWN))
+            self.coats.append(Coat('brown', 15, Direction.LEFT))
+            self.coats.append(Coat('red', 11, Direction.LEFT))
+            self.coats.append(Coat('tan', 13, Direction.RIGHT))
             self.player_list.extend(self.coats)
             self.enemy.extend(self.coats)
             
@@ -190,8 +191,7 @@ class Game(arcade.Window):
 
         if self.madison and self.madison.collides_with_list(self.bullets):
             [bullet.kill() for bullet in self.madison.collides_with_list(self.bullets)]
-            self.madison.get_hit()
-            
+            self.madison.health -= 1
 
         if self.madison and self.madison.health <= 0:
             self.madison.kill()
@@ -201,10 +201,10 @@ class Game(arcade.Window):
             self.m16_music = arcade.Sound('./assets/music/M-16 March.wav', streaming=True)
             self.m16_player = self.m16_music.play(MUSIC_VOLUME)
 
-            for sprite in self.player_list:
-                sprite.kill()
+            [sprite.kill() for sprite in self.player_list if sprite != self.player_sprite]
+            [enemy.kill() for enemy in self.enemy]
 
-            self.player_list.append(Player())
+            self.player_sprite.texture = self.player_sprite.down_textures[0]
 
             self.end_game = True
 
