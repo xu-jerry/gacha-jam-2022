@@ -2,7 +2,7 @@ from enum import Enum
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
-SCREEN_TITLE = "Welcome to Arcade"
+SCREEN_TITLE = "Gun Kill Gun"
 RADIUS = 150
 CELL_LENGTH = 64
 SPRITE_SCALING = 1
