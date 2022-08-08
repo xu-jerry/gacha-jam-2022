@@ -2,10 +2,15 @@
 import arcade
 import time
 import random
+import os
+import sys
 from consts import *
 from chars.player import Player
 from chars.coat import Coat
 from chars.madison import Madison
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    os.chdir(sys._MEIPASS)
 
 class Game(arcade.Window):
     """Main welcome window"""
