@@ -203,7 +203,7 @@ class Game(arcade.Window):
             self.madison_music.stop(self.current_player)
             self.madison_music.set_volume(0, self.current_player)
             self.madison_player.delete()
-            self.m16_music = arcade.Sound('./assets/music/M-16 March.wav', streaming=True)
+            self.m16_music = arcade.Sound('./assets/music/M16 March.wav', streaming=True)
             self.m16_player = self.m16_music.play(MUSIC_VOLUME)
 
             [sprite.kill() for sprite in self.player_list if sprite != self.player_sprite]
